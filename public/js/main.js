@@ -2,6 +2,7 @@ const chatFrom = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
 const roomName = document.getElementById('room-name');
 const userList = document.getElementById('users');
+const switchRoom = document.getElementById('switch-room');
 
 // Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
@@ -51,6 +52,14 @@ function outpurMessage(message) {
     <p class="text"> ${message.text} </p>`;
     document.querySelector('.chat-messages').appendChild(div);
 }
+
+// Switching to another room
+switchRoom.addEventListener('click', () => {
+    const room = prompt('Enter room name');
+    if (room !== '') {
+        location.href = `/chat.html?username=${username}&room=${room}`;
+    }
+});
 
 
 // Add room name to DOM

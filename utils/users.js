@@ -26,10 +26,17 @@ function getRoomUsers(room) {
     return users.filter(user => user.room === room);
 }
 
+//switch to other room from chat
+function switchRoom(id, room) {
+    const user = getCurrentUser(id);
+    user.room = room;
+}
+
 
 module.exports = {
     userJoin,
     getCurrentUser,
     userLeave,
-    getRoomUsers
+    getRoomUsers,
+    switchRoom
 };

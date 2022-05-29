@@ -7,7 +7,8 @@ const {
   userJoin,
   getCurrentUser,
   userLeave,
-  getRoomUsers
+  getRoomUsers,
+    switchRoom
 } = require('./utils/users');
 
 const app = express();
@@ -50,6 +51,28 @@ io.on('connection', socket => {
 
     io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
+
+  // switch room event
+    socket.on('switchRoom', ({ room, username }) => {
+        const user = getCurrentUser(socket.id);
+        const prevRoom = user.room;
+        userLeave(socket.id);
+        userJoin(socket.id, username, room);
+        switchRoom(socket.id, room);
+        socket.leave(prevRoom);
+        socket.join(room);
+        io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
+        io.to(user.room).emit('roomUsers', {
+            room: user.room,
+            users: getRoomUsers(user.room)
+        });
+        io.to(room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
+        io.to(room).emit('roomUsers', {
+            room: user.room,
+            users: getRoomUsers(user.room)
+        });
+    });
+    
 
   // Runs when client disconnects
   socket.on('disconnect', () => {
